@@ -20,7 +20,7 @@
       background: white;
       padding: 30px;
       border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
     h1 {
@@ -28,26 +28,27 @@
       color: #333;
     }
 
-    input, textarea {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      box-sizing: border-box;
-    }
-
-    button {
+    .button, button {
+      display: inline-block;
       padding: 10px 16px;
       border: none;
       border-radius: 6px;
       cursor: pointer;
       color: white;
       background: #007bff;
+      text-decoration: none;
+      font-size: 14px;
     }
 
-    button:hover {
+    .button:hover, button:hover {
       opacity: 0.85;
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+      flex-wrap: wrap;
     }
 
     .task {
@@ -71,6 +72,7 @@
       display: flex;
       gap: 10px;
       margin-top: 10px;
+      flex-wrap: wrap;
     }
 
     .delete {
@@ -79,6 +81,19 @@
 
     .complete {
       background: #28a745;
+    }
+
+    .edit {
+      background: #ffc107;
+      color: #222;
+    }
+
+    .filter-completed {
+      background: #28a745;
+    }
+
+    .filter-pending {
+      background: #6c757d;
     }
   </style>
 </head>
@@ -89,41 +104,51 @@
 
   <h1>📋 Управление задачами</h1>
 
-  <h2>Добавить новую задачу</h2>
-
-  <form th:action="@{/tasks/add}" method="post">
-
-    <input type="text"
-           name="title"
-           placeholder="Название задачи"
-           required>
-
-    <textarea name="description"
-              placeholder="Описание задачи"></textarea>
-
-    <label>Срок выполнения:</label>
-
-    <input type="date" name="deadline">
-
-    <button type="submit">Добавить задачу</button>
-
-  </form>
+  <!-- Создание новой задачи -->
+  <a th:href="@{/tasks/new}" class="button">
+    + Создать задачу
+  </a>
 
   <hr>
 
   <h2>Список задач</h2>
 
+  <!-- Фильтрация задач -->
+  <div class="filters">
+
+    <a th:href="@{/tasks}" class="button">
+      Все задачи
+    </a>
+
+    <a th:href="@{/tasks/filter(completed=true)}"
+       class="button filter-completed">
+      Выполненные
+    </a>
+
+    <a th:href="@{/tasks/filter(completed=false)}"
+       class="button filter-pending">
+      Невыполненные
+    </a>
+
+  </div>
+
+  <!-- Сообщение при отсутствии задач -->
   <p th:if="${#lists.isEmpty(tasks)}">
-    Пока задач нет. Добавьте первую задачу!
+    Задач не найдено.
   </p>
 
+  <!-- Список задач -->
   <div th:each="task : ${tasks}"
        class="task"
        th:classappend="${task.completed} ? 'completed' : ''">
 
-    <h3 th:text="${task.title}">Название задачи</h3>
+    <h3 th:text="${task.title}">
+      Название задачи
+    </h3>
 
-    <p th:text="${task.description}">Описание</p>
+    <p th:text="${task.description}">
+      Описание задачи
+    </p>
 
     <p>
       <strong>Срок:</strong>
@@ -137,20 +162,28 @@
 
     <div class="actions">
 
+      <!-- Редактирование -->
+      <a th:href="@{/tasks/edit/{id}(id=${task.id})}"
+         class="button edit">
+        Редактировать
+      </a>
+
+      <!-- Отметить выполненной -->
       <form th:if="${!task.completed}"
             th:action="@{/tasks/complete/{id}(id=${task.id})}"
             method="post">
 
-        <button class="complete" type="submit">
+        <button type="submit" class="complete">
           Выполнено
         </button>
 
       </form>
 
+      <!-- Удаление -->
       <form th:action="@{/tasks/delete/{id}(id=${task.id})}"
             method="post">
 
-        <button class="delete" type="submit">
+        <button type="submit" class="delete">
           Удалить
         </button>
 

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Форма задачи</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      min-height: 100px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .back {
+      display: inline-block;
+      margin-top: 20px;
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .checkbox input {
+      width: auto;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1 th:text="${task.id == null ? 'Создание задачи' : 'Редактирование задачи'}">
+    Форма задачи
+  </h1>
+
+  <form th:action="@{/tasks/save}"
+        th:object="${task}"
+        method="post">
+
+    <!-- ID задачи при редактировании -->
+    <input type="hidden" th:field="*{id}">
+
+    <label>Название задачи:</label>
+
+    <input type="text"
+           th:field="*{title}"
+           placeholder="Введите название"
+           required>
+
+    <label>Описание:</label>
+
+    <textarea th:field="*{description}"
+              placeholder="Введите описание"></textarea>
+
+    <label>Срок выполнения:</label>
+
+    <input type="date"
+           th:field="*{deadline}">
+
+    <div class="checkbox">
+
+      <input type="checkbox"
+             th:field="*{completed}">
+
+      <label style="margin: 0;">
+        Задача выполнена
+      </label>
+
+    </div>
+
+    <button type="submit">
+      Сохранить задачу
+    </button>
+
+  </form>
+
+  <a th:href="@{/tasks}" class="back">
+    ← Вернуться к списку задач
+  </a>
+
+</div>
+
+</body>
+</html>

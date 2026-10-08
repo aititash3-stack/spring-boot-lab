@@ -35,4 +35,12 @@ public class TaskService {
     public void deleteTask(Long id) {
         taskRepository.deleteById(id);
     }
+
+    // Фильтрация задач по статусу выполнения
+    public List<Task> findByCompleted(boolean completed) {
+        return taskRepository.findAll()
+                .stream()
+                .filter(task -> task.isCompleted() == completed)
+                .toList();
+    }
 }
