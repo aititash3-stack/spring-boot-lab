@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Управление задачами</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      color: white;
+      background: #007bff;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    .task {
+      background: #f8f9fa;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 8px;
+      border-left: 5px solid #007bff;
+    }
+
+    .completed {
+      border-left-color: #28a745;
+      opacity: 0.7;
+    }
+
+    .completed h3 {
+      text-decoration: line-through;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .delete {
+      background: #dc3545;
+    }
+
+    .complete {
+      background: #28a745;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>📋 Управление задачами</h1>
+
+  <h2>Добавить новую задачу</h2>
+
+  <form th:action="@{/tasks/add}" method="post">
+
+    <input type="text"
+           name="title"
+           placeholder="Название задачи"
+           required>
+
+    <textarea name="description"
+              placeholder="Описание задачи"></textarea>
+
+    <label>Срок выполнения:</label>
+
+    <input type="date" name="deadline">
+
+    <button type="submit">Добавить задачу</button>
+
+  </form>
+
+  <hr>
+
+  <h2>Список задач</h2>
+
+  <p th:if="${#lists.isEmpty(tasks)}">
+    Пока задач нет. Добавьте первую задачу!
+  </p>
+
+  <div th:each="task : ${tasks}"
+       class="task"
+       th:classappend="${task.completed} ? 'completed' : ''">
+
+    <h3 th:text="${task.title}">Название задачи</h3>
+
+    <p th:text="${task.description}">Описание</p>
+
+    <p>
+      <strong>Срок:</strong>
+      <span th:text="${task.deadline != null ? task.deadline : 'Не указан'}"></span>
+    </p>
+
+    <p>
+      <strong>Статус:</strong>
+      <span th:text="${task.completed ? 'Выполнено' : 'Не выполнено'}"></span>
+    </p>
+
+    <div class="actions">
+
+      <form th:if="${!task.completed}"
+            th:action="@{/tasks/complete/{id}(id=${task.id})}"
+            method="post">
+
+        <button class="complete" type="submit">
+          Выполнено
+        </button>
+
+      </form>
+
+      <form th:action="@{/tasks/delete/{id}(id=${task.id})}"
+            method="post">
+
+        <button class="delete" type="submit">
+          Удалить
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>
